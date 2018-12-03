@@ -3,6 +3,7 @@ import os
 import time
 
 import requests
+import logging
 
 from .errors import *
 
@@ -186,6 +187,7 @@ class BaseAPI(object):
             response = requests.post(self.FCM_END_POINT, headers=self.request_headers(), data=payload)
         if 'Retry-After' in response.headers and int(response.headers['Retry-After']) > 0:
             sleep_time = int(response.headers['Retry-After'])
+            logging.warning(f"Retrying request in {sleep_time} seconds")
             time.sleep(sleep_time)
             return self.do_request(payload)
         return response
@@ -242,5 +244,6 @@ class BaseAPI(object):
             elif response.status_code == 400:
                 raise InternalPackageError(response.text)
             else:
+                logging.error(f"FCM Response headers: {response.headers}")
                 raise FCMServerError("FCM server is temporarily unavailable")
         return response_list
