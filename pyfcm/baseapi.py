@@ -244,6 +244,6 @@ class BaseAPI(object):
             elif response.status_code == 400:
                 raise InternalPackageError(response.text)
             else:
-                logging.error(f"FCM Response headers: {response.headers}")
+                logging.error(f"FCM Response headers: {response.headers}, content: {response.content}")
                 raise FCMServerError("FCM server is temporarily unavailable")
         return response_list
